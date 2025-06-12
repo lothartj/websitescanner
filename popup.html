@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSiteScan</title>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 500px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    h1 {
+      color: #2c3e50;
+      font-size: 18px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    button.stop {
+      background-color: #e74c3c;
+    }
+    button.stop:hover {
+      background-color: #c0392b;
+    }
+    .results {
+      margin-top: 15px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+    .option-group {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      background-color: #f5f5f5;
+    }
+    .option-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #2c3e50;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .tab-nav {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 15px;
+    }
+    .tab-btn {
+      padding: 8px 15px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      font-weight: bold;
+      color: #7f8c8d;
+    }
+    .tab-btn.active {
+      border-bottom: 2px solid #3498db;
+      color: #2c3e50;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .log-entry {
+      padding: 5px;
+      border-bottom: 1px solid #eee;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .log-entry.info {
+      color: #2980b9;
+    }
+    .log-entry.success {
+      color: #27ae60;
+    }
+    .log-entry.error {
+      color: #c0392b;
+    }
+    .log-entry.warning {
+      color: #f39c12;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .collapsible {
+      background-color: #f1f1f1;
+      cursor: pointer;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-weight: bold;
+      margin-bottom: 5px;
+      border-radius: 4px;
+    }
+    .collapsible:after {
+      content: '\002B';
+      color: #777;
+      font-weight: bold;
+      float: right;
+      margin-left: 5px;
+    }
+    .collapsible.active:after {
+      content: "\2212";
+    }
+    .collapsible-content {
+      padding: 0 10px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease-out;
+      background-color: #f9f9f9;
+      border-radius: 0 0 4px 4px;
+    }
+    .progress-bar {
+      width: 100%;
+      background-color: #f1f1f1;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    .progress {
+      width: 0%;
+      height: 20px;
+      background-color: #4CAF50;
+      text-align: center;
+      line-height: 20px;
+      color: white;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>WebSiteScan - Security Scanner</h1>
+    
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="main">Main</button>
+      <button class="tab-btn" data-tab="advanced">Advanced</button>
+      <button class="tab-btn" data-tab="logs">Logs</button>
+      <button class="tab-btn" data-tab="results">Results</button>
+    </div>
+    
+    <div id="main-tab" class="tab-content active">
+      <div class="option-group">
+        <div class="option-title">Scan Options:</div>
+        <label>
+          <input type="checkbox" id="scanAdminPaths" checked>
+          Scan for admin paths
+        </label>
+        <label>
+          <input type="checkbox" id="scanTech" checked>
+          Detect website technologies
+        </label>
+        <label>
+          <input type="checkbox" id="scanVulnerablePaths" checked>
+          Scan for common vulnerable paths
+        </label>
+      </div>
+
+      <div class="option-group">
+        <div class="option-title">Security Options:</div>
+        <label>
+          <input type="checkbox" id="useProxy">
+          Use proxy for anonymity
+        </label>
+        <label>
+          <input type="text" id="proxyAddress" placeholder="Proxy address (e.g., 127.0.0.1:8080)" style="width: 100%;">
+        </label>
+        <label>
+          <input type="checkbox" id="randomUserAgent" checked>
+          Use random User-Agent
+        </label>
+      </div>
+      
+      <div class="progress-bar">
+        <div id="progress" class="progress">0%</div>
+      </div>
+
+      <div class="action-buttons">
+        <button id="startScan">Start Scanning</button>
+        <button id="stopScan" class="stop" disabled>Stop Scan</button>
+      </div>
+      
+      <div class="results" id="scanSummary">
+        <em>Scan summary will appear here...</em>
+      </div>
+    </div>
+    
+    <div id="advanced-tab" class="tab-content">
+      <button class="collapsible">Performance Testing</button>
+      <div class="collapsible-content">
+        <div class="option-group">
+          <label>
+            <input type="checkbox" id="testLoadTime">
+            Test page load time
+          </label>
+          <label>
+            <input type="checkbox" id="testResponseSize">
+            Analyze response size
+          </label>
+          <label>
+            <input type="checkbox" id="testResourceCount">
+            Count resources (JS, CSS, images)
+          </label>
+        </div>
+      </div>
+
+      <button class="collapsible">Network Analysis</button>
+      <div class="collapsible-content">
+        <div class="option-group">
+          <label>
+            <input type="checkbox" id="analyzeHeaders">
+            Analyze HTTP headers
+          </label>
+          <label>
+            <input type="checkbox" id="checkSecurity">
+            Check security headers
+          </label>
+          <label>
+            <input type="checkbox" id="checkCookies">
+            Audit cookies
+          </label>
+        </div>
+      </div>
+
+      <button class="collapsible">Stress Testing</button>
+      <div class="collapsible-content">
+        <div class="option-group">
+          <label>
+            <input type="checkbox" id="stressTest">
+            Enable stress testing
+          </label>
+          <label>
+            Requests per second:
+            <input type="number" id="requestsPerSecond" min="1" max="100" value="10" style="width: 60px;">
+          </label>
+          <label>
+            Duration (seconds):
+            <input type="number" id="stressDuration" min="1" max="60" value="10" style="width: 60px;">
+          </label>
+          <small style="color: #e74c3c;">Warning: Only use on your own servers with permission!</small>
+        </div>
+      </div>
+
+      <button class="collapsible">Custom Paths</button>
+      <div class="collapsible-content">
+        <div class="option-group">
+          <label>
+            Custom paths to scan (one per line):
+            <textarea id="customPaths" rows="4" style="width: 100%;" placeholder="/custom-admin
+/secret
+/backup
+/dev"></textarea>
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <div id="logs-tab" class="tab-content">
+      <div class="results" id="scanLogs" style="max-height: 400px;">
+        <em>Scan logs will appear here...</em>
+      </div>
+    </div>
+    
+    <div id="results-tab" class="tab-content">
+      <div class="results" id="scanResults" style="max-height: 400px;">
+        <em>Detailed results will appear here...</em>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html> 
