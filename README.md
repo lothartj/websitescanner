@@ -2,6 +2,10 @@
 
 A comprehensive Chrome extension for website security testing and penetration testing that identifies potentially vulnerable paths, technologies, and security issues on websites.
 
+## Screenshot
+
+![WebSiteScan Preview](preview.png)
+
 ## Features
 
 ### Core Scanning Features
