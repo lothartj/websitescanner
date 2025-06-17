@@ -1,4 +1,4 @@
-# WebSiteScan - Advanced Security Scanner Chrome Extension
+# WebSiteScan - Advanced Security Scanner Chrome Extension.
 
 A comprehensive Chrome extension for website security testing and penetration testing that identifies potentially vulnerable paths, technologies, and security issues on websites
 
